@@ -66,4 +66,54 @@ class Cult
       cult.founding_year == year
     end
   end
+
+  def average_age
+    total_age = followers.reduce(0) do |sum, follower|
+      sum + follower.age
+    end
+    total_age / followers.size.to_f
+  end
+
+  def my_followers_mottos
+    followers.map do |follower|
+      follower.life_motto
+    end
+  end
+
+  def self.least_popular
+    #returns first instances with the smallest population
+    fewest_members = 0
+    smallest_cult = nil
+    self.all.each do |cult|
+      if fewest_members == 0 && smallest_cult == nil
+        fewest_members = cult.cult_population
+        smallest_cult = cult
+      elsif fewest_members == 0 && smallest_cult != nil
+        next
+      elsif cult.cult_population < fewest_members
+        fewest_members = cult.cult_population
+        smallest_cult = cult
+      end
+    end
+    smallest_cult
+  end
+
+  def self.most_common_location
+    #returns last instances with the most common location
+    most_common = 0
+    common_location = nil
+    locations.each do |location|
+      if most_common < Cult.find_by_location(location).size
+        most_common = Cult.find_by_location(location).size
+        common_location = location
+      end
+    end
+    common_location
+  end
+
+  def self.locations
+    self.all.map do |cult|
+      cult.location
+    end.uniq
+  end
 end
